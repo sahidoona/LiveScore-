@@ -1,56 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>📢 Latest Football News | Sahidoona</title>
-  <meta name="description" content="Stay updated with the latest football news – live headlines from SoccerNews.com."/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⚽ Sahidoona Football News</title>
+  <meta name="description" content="Latest football news from around the world. Powered by Sahidoona." />
   <style>
     body { font-family: Arial, sans-serif; background: #0d0d0d; color: #eee; margin: 0; padding: 20px; }
-    h1 { text-align: center; }
-    ul { list-style: none; padding: 0; }
-    li { background: #1a1a1a; margin: 10px 0; padding: 12px; border-radius: 6px; }
-    a { color: #00ff66; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    footer { text-align: center; margin-top: 30px; color: #888; font-size: 14px; }
+    header { text-align: center; margin-bottom: 20px; }
+    header h1 { margin: 0; font-size: 24px; }
+    #news { list-style: none; padding: 0; }
+    .item { background: #222; margin-bottom: 10px; padding: 15px; border-radius: 5px; }
+    .item a { color: #00ff66; text-decoration: none; font-weight: bold; }
+    .item p { margin: 5px 0 0; font-size: 14px; color: #ccc; }
+    footer { text-align: center; margin-top: 30px; font-size: 14px; color: #999; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>📢 Latest Football News</h1>
+  </header>
 
-  <h1>📢 Latest Football News</h1>
-  <ul id="news-list">
-    <li>Loading latest news...</li>
+  <ul id="news">
+    <li>Loading news…</li>
   </ul>
 
-  <footer>&copy; 2025 Sahidoona. Powered by SoccerNews RSS.</footer>
+  <footer>
+    &copy; 2025 Sahidoona — powered by SoccerNews RSS feed
+  </footer>
 
   <script>
+    const RSS_URL = 'https://www.soccernews.com/feed';
     async function loadRSS() {
-      const proxy = 'https://api.allorigins.win/raw?url=';
-      const rssUrl = encodeURIComponent('https://feeds.feedburner.com/soccern...'); // SoccerNews RSS URL
       try {
-        const res = await fetch(proxy + rssUrl);
-        const text = await res.text();
+        const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(RSS_URL));
+        const data = await res.json();
         const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
+        const xml = parser.parseFromString(data.contents, 'text/xml');
         const items = xml.querySelectorAll('item');
-        const list = document.getElementById('news-list');
-        list.innerHTML = '';
+        const ul = document.getElementById('news');
+        ul.innerHTML = '';
 
-        items.forEach((item, index) => {
-          if (index >= 5) return; // Show top 5
-          const title = item.querySelector('title').textContent;
-          const link = item.querySelector('link').textContent;
+        items.forEach((item, i) => {
+          if (i >= 5) return; // show top 5
+          const title = item.querySelector('title')?.textContent;
+          const link = item.querySelector('link')?.textContent;
+          const date = item.querySelector('pubDate')?.textContent;
           const li = document.createElement('li');
-          li.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
-          list.appendChild(li);
+          li.className = 'item';
+          li.innerHTML = `
+            <a href="${link}" target="_blank">${title}</a>
+            <p>${new Date(date).toLocaleString()}</p>
+          `;
+          ul.appendChild(li);
         });
-
       } catch (e) {
-        document.getElementById('news-list').innerHTML =
-          '<li>Failed to load news. Please try again later.</li>';
+        console.error(e);
+        document.getElementById('news').innerHTML = '<li>Failed to load news.</li>';
       }
     }
+
     loadRSS();
   </script>
 </body>
