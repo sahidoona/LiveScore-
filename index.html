@@ -3,51 +3,55 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>⚽ Sahidoona Football News</title>
+  <title>📢 Latest Football News | Sahidoona</title>
+  <meta name="description" content="Stay updated with the latest football news – live headlines from SoccerNews.com."/>
   <style>
-    body { font-family: Arial, sans-serif; background: #0f0f0f; color: #eee; padding: 20px; }
-    h1 { text-align: center; color: #00ff66; }
-    .feed-item { background: #1a1a1a; margin: 10px 0; padding: 15px; border-radius: 5px; }
-    .feed-item h2 { margin: 0 0 5px; font-size: 18px; }
-    .feed-item p { font-size: 14px; color: #ccc; }
-    .feed-item a { color: #00ff66; text-decoration: none; }
+    body { font-family: Arial, sans-serif; background: #0d0d0d; color: #eee; margin: 0; padding: 20px; }
+    h1 { text-align: center; }
+    ul { list-style: none; padding: 0; }
+    li { background: #1a1a1a; margin: 10px 0; padding: 12px; border-radius: 6px; }
+    a { color: #00ff66; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer { text-align: center; margin-top: 30px; color: #888; font-size: 14px; }
   </style>
 </head>
 <body>
+
   <h1>📢 Latest Football News</h1>
-  <div id="rss-feed">Loading news...</div>
+  <ul id="news-list">
+    <li>Loading latest news...</li>
+  </ul>
+
+  <footer>&copy; 2025 Sahidoona. Powered by SoccerNews RSS.</footer>
 
   <script>
-    // Fetch RSS feed via a free CORS-enabled service
-    fetch('https://api.allorigins.win/raw?url=https://www.90min.com/posts.rss')
-      .then(res => res.text())
-      .then(str => new window.DOMParser().parseFromString(str, "application/xml"))
-      .then(data => {
-        const items = data.querySelectorAll("item");
-        const feedDiv = document.getElementById("rss-feed");
-        feedDiv.innerHTML = ""; // Clear loading text
+    async function loadRSS() {
+      const proxy = 'https://api.allorigins.win/raw?url=';
+      const rssUrl = encodeURIComponent('https://feeds.feedburner.com/soccern...'); // SoccerNews RSS URL
+      try {
+        const res = await fetch(proxy + rssUrl);
+        const text = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, "application/xml");
+        const items = xml.querySelectorAll('item');
+        const list = document.getElementById('news-list');
+        list.innerHTML = '';
 
-        items.forEach((item, i) => {
-          if (i >= 5) return; // Limit to top 5 items
-          const title = item.querySelector("title").textContent;
-          const link = item.querySelector("link").textContent;
-          const desc = item.querySelector("description").textContent;
-          const pub = new Date(item.querySelector("pubDate").textContent)
-                        .toLocaleString();
-
-          const html = `
-            <div class="feed-item">
-              <h2><a href="${link}" target="_blank">${title}</a></h2>
-              <p><em>${pub}</em></p>
-              <p>${desc}</p>
-            </div>`;
-          feedDiv.innerHTML += html;
+        items.forEach((item, index) => {
+          if (index >= 5) return; // Show top 5
+          const title = item.querySelector('title').textContent;
+          const link = item.querySelector('link').textContent;
+          const li = document.createElement('li');
+          li.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
+          list.appendChild(li);
         });
-      })
-      .catch(err => {
-        document.getElementById("rss-feed").innerText = "Failed to load news.";
-        console.error(err);
-      });
+
+      } catch (e) {
+        document.getElementById('news-list').innerHTML =
+          '<li>Failed to load news. Please try again later.</li>';
+      }
+    }
+    loadRSS();
   </script>
 </body>
 </html>
