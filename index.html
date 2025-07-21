@@ -2,35 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>⚽ Sahidoona Live Scores</title>
-  <meta name="description" content="Live football scores powered by Sahidoona." />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>⚽ Sahidoona Football News</title>
   <style>
-    body { font-family: 'Roboto', sans-serif; background: #0d0d0d; color: #eee; margin:0; padding:0; }
-    header, footer { background:#111; padding:20px; text-align:center; color:#eee; }
-    header h1 { color:#00ff66; margin:0; }
-    main { padding:20px; max-width:900px; margin:auto; }
-    footer { font-size:14px; color:#999; }
+    body { font-family: Arial, sans-serif; background: #0f0f0f; color: #eee; padding: 20px; }
+    h1 { text-align: center; color: #00ff66; }
+    .feed-item { background: #1a1a1a; margin: 10px 0; padding: 15px; border-radius: 5px; }
+    .feed-item h2 { margin: 0 0 5px; font-size: 18px; }
+    .feed-item p { font-size: 14px; color: #ccc; }
+    .feed-item a { color: #00ff66; text-decoration: none; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>⚽ Sahidoona Live Scores</h1>
-    <p>Live match updates</p>
-  </header>
+  <h1>📢 Latest Football News</h1>
+  <div id="rss-feed">Loading news...</div>
 
-  <main>
-    <!-- Paste your SportMonks widget code below: -->
-    <!-- Example: -->
-    <!-- <div id="sm-livescore-widget"></div>
-         <script src="https://widget.sportmonks.com/livescore.js" async></script>
-         <script>SportMonksLivescore.init({ widget: '#sm-livescore-widget', leagues: [123,456], theme: 'dark' });</script>
-    -->
-  </main>
+  <script>
+    // Fetch RSS feed via a free CORS-enabled service
+    fetch('https://api.allorigins.win/raw?url=https://www.90min.com/posts.rss')
+      .then(res => res.text())
+      .then(str => new window.DOMParser().parseFromString(str, "application/xml"))
+      .then(data => {
+        const items = data.querySelectorAll("item");
+        const feedDiv = document.getElementById("rss-feed");
+        feedDiv.innerHTML = ""; // Clear loading text
 
-  <footer>
-    &copy; 2025 Sahidoona | Live scores via SportMonks
-  </footer>
+        items.forEach((item, i) => {
+          if (i >= 5) return; // Limit to top 5 items
+          const title = item.querySelector("title").textContent;
+          const link = item.querySelector("link").textContent;
+          const desc = item.querySelector("description").textContent;
+          const pub = new Date(item.querySelector("pubDate").textContent)
+                        .toLocaleString();
+
+          const html = `
+            <div class="feed-item">
+              <h2><a href="${link}" target="_blank">${title}</a></h2>
+              <p><em>${pub}</em></p>
+              <p>${desc}</p>
+            </div>`;
+          feedDiv.innerHTML += html;
+        });
+      })
+      .catch(err => {
+        document.getElementById("rss-feed").innerText = "Failed to load news.";
+        console.error(err);
+      });
+  </script>
 </body>
 </html>
