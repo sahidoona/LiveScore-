@@ -2,36 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>⚽ Sahidoona Live Scores</title>
-  <meta name="description" content="Real-time football live scores. Powered by Sahidoona." />
-  <meta name="keywords" content="football live scores, sahidoona, soccer, livescore widget" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⚽ Sahidoona Match Updates</title>
+  <meta name="description" content="Upcoming football matches and standings. Powered by Sahidoona." />
+  <meta name="keywords" content="football upcoming matches, standings widget, sahidoona" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     body { font-family: 'Roboto', sans-serif; background: #0d0d0d; color: #eee; margin: 0; padding: 0; }
     header { background: #111; padding: 20px; text-align: center; border-bottom: 3px solid #00ff66; }
     header h1 { margin: 0; color: #00ff66; }
-    header p { margin: 5px 0 0; }
     main { padding: 20px; text-align: center; }
     .widget-container { margin: auto; max-width: 900px; }
-    iframe { width: 100%; border: none; min-height: 600px; }
     footer { background: #111; padding: 15px; text-align: center; border-top: 3px solid #00ff66; font-size: 14px; color: #999; }
   </style>
 </head>
 <body>
   <header>
-    <h1>⚽ Sahidoona Live Scores</h1>
-    <p>Real-time football scores from top leagues</p>
+    <h1>⚽ Sahidoona Match Updates</h1>
+    <p>See upcoming matches & league standings</p>
   </header>
 
   <main>
     <div class="widget-container">
-      <iframe src="https://livescore.soccersapi.com/livescore-widget?theme=dark"></iframe>
+      <!-- Upcoming Matches -->
+      <div id="fs-upcoming"></div>
+      <script>
+        (function(w,d,s,o,f,js,fjs){
+          w['fsUpcomingEmbed']=o; w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
+          js=d.createElement(s); js.id=o; js.src=f; js.async=1;
+          fjs=d.getElementsByTagName(s)[0]; fjs.parentNode.insertBefore(js,fjs);
+        }(window, document, 'script', 'fsUpcoming', 'https://cdn.footystats.org/embeds/upcoming.js'));
+        fsUpcoming('params', { leagueID: 93 }); // Premier League
+      </script>
+
+      <br/>
+
+      <!-- Standings Widget -->
+      <div id="fs-standings"></div>
+      <script>
+        (function(w,d,s,o,f,js,fjs){
+          w['fsStandingsEmbed']=o; w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
+          js=d.createElement(s); js.id=o; js.src=f; js.async=1;
+          fjs=d.getElementsByTagName(s)[0]; fjs.parentNode.insertBefore(js,fjs);
+        }(window, document, 'script', 'fsStandings', 'https://cdn.footystats.org/embeds/standings.js'));
+        fsStandings('params', { leagueID: 93 });
+      </script>
     </div>
   </main>
 
   <footer>
-    &copy; 2025 Sahidoona | Live scores by SoccerSAPI
+    &copy; 2025 Sahidoona | Upcoming Matches & Standings powered by FootyStats
   </footer>
 </body>
 </html>
